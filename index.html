@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Answer Carefully 😏</title>
+
+<style>
+body {
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+  overflow: hidden;
+}
+
+.box, .proposal {
+  text-align: center;
+  z-index: 2;
+}
+
+.hidden {
+  display: none;
+}
+
+h1 {
+  margin-bottom: 30px;
+}
+
+button {
+  padding: 12px 30px;
+  font-size: 18px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  margin: 10px;
+}
+
+#yes {
+  background: #28a745;
+  color: white;
+}
+
+#no {
+  background: #dc3545;
+  color: white;
+  position: absolute;
+}
+
+.celebrate {
+  font-size: 32px;
+  color: white;
+  animation: pulse 0.6s ease infinite alternate;
+}
+
+@keyframes pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+
+.heart {
+  position: absolute;
+  font-size: 24px;
+  animation: fall 4s linear forwards;
+}
+
+@keyframes fall {
+  0% { transform: translateY(-10px); opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Fireworks Canvas -->
+<canvas id="fireworks"></canvas>
+
+<!-- Main Question -->
+<div class="box" id="mainBox">
+  <h1>Do you love me? 💖</h1>
+  <button id="yes">YES</button>
+  <button id="no">NO</button>
+  <div id="message"></div>
+</div>
+
+<!-- Proposal Screen -->
+<div class="proposal hidden" id="proposalBox">
+  <h1>💍 Will you be mine forever? 💕</h1>
+  <button onclick="finalYes()">YES 😍</button>
+</div>
+
+<!-- Romantic Music -->
+<audio id="music" loop>
+  <!-- Replace this link with your own MP3 if you want -->
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_2c6d5a07bb.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
+const message = document.getElementById("message");
+const music = document.getElementById("music");
+const mainBox = document.getElementById("mainBox");
+const proposalBox = document.getElementById("proposalBox");
+
+/* NO button runs away */
+noBtn.addEventListener("mouseover", () => {
+  noBtn.style.left = Math.random() * (window.innerWidth - 100) + "px";
+  noBtn.style.top = Math.random() * (window.innerHeight - 50) + "px";
+});
+
+/* YES click */
+yesBtn.addEventListener("click", () => {
+  music.play(); // music starts here (browser-safe)
+  message.innerHTML = "🎉 I knew it! I love you too 💕🥰";
+  message.className = "celebrate";
+  startHearts();
+  launchFireworks();
+
+  setTimeout(() => {
+    mainBox.classList.add("hidden");
+    proposalBox.classList.remove("hidden");
+  }, 4000);
+});
+
+function finalYes() {
+  alert("💖 Forever starts now 💖");
+}
+
+/* Heart rain */
+function startHearts() {
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "💖";
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.fontSize = Math.random() * 20 + 20 + "px";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 4000);
+  }, 200);
+}
+
+/* Fireworks */
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function launchFireworks() {
+  setInterval(() => {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height / 2;
+    for (let i = 0; i < 40; i++) drawParticle(x, y);
+  }, 700);
+}
+
+/* COLORFUL firework particles */
+function drawParticle(x, y) {
+  const angle = Math.random() * Math.PI * 2;
+  const speed = Math.random() * 4 + 2;
+  let alpha = 1;
+
+  const colors = [
+    "255, 99, 132",
+    "255, 205, 86",
+    "54, 162, 235",
+    "75, 192, 192",
+    "153, 102, 255",
+    "255, 159, 64"
+  ];
+
+  const color = colors[Math.floor(Math.random() * colors.length)];
+
+  function animate() {
+    ctx.beginPath();
+    ctx.arc(x, y, 2, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${color}, ${alpha})`;
+    ctx.fill();
+
+    x += Math.cos(angle) * speed;
+    y += Math.sin(angle) * speed;
+    alpha -= 0.02;
+
+    if (alpha > 0) requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+/* Resize fix */
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
