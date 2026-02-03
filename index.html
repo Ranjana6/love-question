@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Answer Carefully 😏</title>
-
 <style>
 body {
   height: 100vh;
@@ -14,20 +13,22 @@ body {
   font-family: Arial, sans-serif;
   background: linear-gradient(135deg, #ffdde1, #ee9ca7);
   overflow: hidden;
+  transition: background 1s;
 }
 
+/* Main box style */
 .box, .proposal {
   text-align: center;
   z-index: 2;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 40px;
+  border-radius: 20px;
+  transition: background 1s, color 1s;
 }
 
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 
-h1 {
-  margin-bottom: 30px;
-}
+h1 { margin-bottom: 30px; }
 
 button {
   padding: 12px 30px;
@@ -38,22 +39,10 @@ button {
   margin: 10px;
 }
 
-#yes {
-  background: #28a745;
-  color: white;
-}
+#yes { background: #28a745; color: white; }
+#no { background: #dc3545; color: white; position: absolute; }
 
-#no {
-  background: #dc3545;
-  color: white;
-  position: absolute;
-}
-
-.celebrate {
-  font-size: 32px;
-  color: white;
-  animation: pulse 0.6s ease infinite alternate;
-}
+.celebrate { font-size: 32px; color: white; animation: pulse 0.6s ease infinite alternate; }
 
 @keyframes pulse {
   from { transform: scale(1); }
@@ -71,11 +60,24 @@ button {
   100% { transform: translateY(100vh); opacity: 0; }
 }
 
-canvas {
+canvas { position: absolute; top: 0; left: 0; z-index: 0; }
+
+/* Girl GIF */
+#girlGif {
   position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  z-index: 5;
+  display: none;
+}
+
+/* Entire body background change */
+body.pink-bg {
+  background: linear-gradient(135deg, #ffdee1, #ee9ca7);
+  transition: background 1s;
 }
 </style>
 </head>
@@ -84,6 +86,9 @@ canvas {
 
 <!-- Fireworks Canvas -->
 <canvas id="fireworks"></canvas>
+
+<!-- Girl GIF -->
+<img id="girlGif" src="https://media.giphy.com/media/3o7TKtnuHOHHUjR38Y/giphy.gif" alt="Excited Girl">
 
 <!-- Main Question -->
 <div class="box" id="mainBox">
@@ -101,8 +106,7 @@ canvas {
 
 <!-- Romantic Music -->
 <audio id="music" loop>
-  <!-- Replace this link with your own MP3 if you want -->
-  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_2c6d5a07bb.mp3" type="audio/mpeg">
+  <source src="https://link.ashamaluevmusic.com/dKew" type="audio/mpeg">
 </audio>
 
 <script>
@@ -113,6 +117,18 @@ const music = document.getElementById("music");
 const mainBox = document.getElementById("mainBox");
 const proposalBox = document.getElementById("proposalBox");
 
+/* Attempt autoplay on page load */
+window.addEventListener("load", () => {
+  music.play().catch(() => {
+    // Autoplay blocked, wait for user interaction
+    const startMusic = () => {
+      music.play();
+      window.removeEventListener("click", startMusic);
+    };
+    window.addEventListener("click", startMusic);
+  });
+});
+
 /* NO button runs away */
 noBtn.addEventListener("mouseover", () => {
   noBtn.style.left = Math.random() * (window.innerWidth - 100) + "px";
@@ -121,15 +137,35 @@ noBtn.addEventListener("mouseover", () => {
 
 /* YES click */
 yesBtn.addEventListener("click", () => {
-  music.play(); // music starts here (browser-safe)
+  // Music
+  music.play().catch(() => {});
+
+  // Celebration message
   message.innerHTML = "🎉 I knew it! I love you too 💕🥰";
   message.className = "celebrate";
+  message.style.color = "#ff1493"; 
+
+  // Start hearts and fireworks
   startHearts();
   launchFireworks();
 
+  // Show excited girl GIF
+  const girlGif = document.getElementById("girlGif");
+  girlGif.style.display = "block";
+
+  // Turn main box background white
+  mainBox.style.background = "#fff";
+
+  // Change entire screen background to pink after 1.5s
+  setTimeout(() => {
+    document.body.classList.add("pink-bg");
+  }, 1500);
+
+  // After 4s, hide main box and show proposal
   setTimeout(() => {
     mainBox.classList.add("hidden");
     proposalBox.classList.remove("hidden");
+    girlGif.style.display = "none"; // hide GIF when proposal appears
   }, 4000);
 });
 
@@ -205,3 +241,4 @@ window.addEventListener("resize", () => {
 
 </body>
 </html>
+
